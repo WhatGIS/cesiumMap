@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesiumjs.org/releases/1.81/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesiumjs.org/releases/1.81/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+</head>
+<body>
+<div id="cesiumContainer" ></div>
+<div id="toolbar"></div>
+</body>
+<script type="text/javascript">
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  const viewer = new Cesium.Viewer('cesiumContainer', {
+    terrainProvider: Cesium.createWorldTerrain()
+  });
+
+
+  //var viewer = new Cesium.Viewer('cesiumContainer');
+
+  var wyoming = viewer.entities.add({
+    polygon : {
+      hierarchy : Cesium.Cartesian3.fromDegreesArray([
+        -109.080842,45.002073,
+        -105.91517,45.002073,
+        -104.058488,44.996596,
+        -104.053011,43.002989,
+        -104.053011,41.003906,
+        -105.728954,40.998429,
+        -107.919731,41.003906,
+        -109.04798,40.998429,
+        -111.047063,40.998429,
+        -111.047063,42.000709,
+        -111.047063,44.476286,
+        -111.05254,45.002073]),
+      height : 0,
+      material : Cesium.Color.RED.withAlpha(0.5),
+      outline : true,
+      outlineColor : Cesium.Color.BLACK
+    }
+  });
+
+  viewer.zoomTo(wyoming);
+</script>
+</html>
