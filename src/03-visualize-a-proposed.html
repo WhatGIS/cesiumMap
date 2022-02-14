@@ -39,7 +39,9 @@
       entity.polygon.classificationType = Cesium.ClassificationType.TERRAIN;
     }
 
-    viewer.zoomTo(dataSource);
+    //viewer.zoomTo(dataSource);
+    viewer.flyTo(dataSource);
+
   }
 
   addBuildingGeoJSON();

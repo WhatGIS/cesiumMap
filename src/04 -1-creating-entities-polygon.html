@@ -13,12 +13,12 @@
 <script type="text/javascript">
   Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
 
-  const viewer = new Cesium.Viewer('cesiumContainer', {
-    terrainProvider: Cesium.createWorldTerrain()
-  });
+  // const viewer = new Cesium.Viewer('cesiumContainer', {
+  //   terrainProvider: Cesium.createWorldTerrain()
+  // });
 
 
-  //var viewer = new Cesium.Viewer('cesiumContainer');
+  var viewer = new Cesium.Viewer('cesiumContainer');
 
   var wyoming = viewer.entities.add({
     polygon : {
@@ -42,6 +42,41 @@
     }
   });
 
-  viewer.zoomTo(wyoming);
+  wyoming.name = 'wyoming';
+  wyoming.description =  '\
+      <img\
+        width="50%"\
+        style="float:left; margin: 0 1em 1em 0;"\
+        src="../src/img/logo12.png"/>\
+      <p>\
+        Wyoming is a state in the mountain region of the Western \
+        United States.\
+      </p>\
+      <p>\
+        Wyoming is the 10th most extensive, but the least populous \
+        and the second least densely populated of the 50 United \
+        States. The western two thirds of the state is covered mostly \
+        with the mountain ranges and rangelands in the foothills of \
+        the eastern Rocky Mountains, while the eastern third of the \
+        state is high elevation prairie known as the High Plains. \
+        Cheyenne is the capital and the most populous city in Wyoming, \
+        with a population estimate of 63,624 in 2017.\
+      </p>\
+      <p>\
+        Source: \
+        <a style="color: WHITE"\
+          target="_blank"\
+          href="http://en.wikipedia.org/wiki/Wyoming">Wikpedia</a>\
+      </p>';
+
+  //viewer.zoomTo(wyoming);
+  viewer.flyTo(wyoming).then(function (result) {
+    if(result){
+      viewer.selectedEntity = wyoming;
+      wyoming.position = Cesium.Cartesian3.fromDegrees(-107.724,42.68);
+      viewer.trackedEntity = wyoming;
+    }
+  })
+
 </script>
 </html>
