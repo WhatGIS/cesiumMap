@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesiumjs.org/releases/1.81/Build/Cesium/Cesium.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-header.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-client.js"></script>
+  <script src="https://sandcastle.cesium.com/ThirdParty/pako.min.js"></script>
+
+  <script src="https://sandcastle.cesium.com/Sandcastle-helpers.js"></script>
+
+  <link href="https://cesiumjs.org/releases/1.81/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <link href="https://sandcastle.cesium.com/templates/bucket.css" rel="stylesheet">
+  <style>
+    #viewChanged,
+    #cameraChanged {
+      display: none;
+      background-color: red;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer" class="fullSize" ></div>
+  <div id="loadingOverlay"><h1>Loading...</h1></div>
+  <div id="toolbar">
+    <div id="viewChanged">ViewChanged</div>
+    <div id="cameraChanged">Camera Changed</div>
+  </div>
+</body>
+<script type="text/javascript">
+
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  var viewer = new Cesium.Viewer('cesiumContainer');
+  var scene = viewer.scene;
+
+  var instance = new Cesium.GeometryInstance({
+    geometry : new Cesium.RectangleGeometry({
+      rectangle : Cesium.Rectangle.fromDegrees(-100.0, 30.0, -90.0, 40.0),
+      vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT
+    }),
+    id : 'my rectangle',
+    attributes : {
+      color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.RED)
+    }
+  });
+
+  scene.primitives.add(new Cesium.Primitive({
+    geometryInstances : instance,
+    appearance : new Cesium.PerInstanceColorAppearance()
+  }));
+
+  var handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+  handler.setInputAction(function (movement) {08-5-custom-geometry-scene-pick.html
+    var pick = scene.pick(movement.position);
+    if (Cesium.defined(pick) && (pick.id === 'my rectangle')) {
+      console.log('Mouse clicked rectangle.');
+    }
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+</script>
+</html>

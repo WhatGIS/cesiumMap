@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <script src="https://cesiumjs.org/releases/1.81/Build/Cesium/Cesium.js"></script>
+<!--  <script src="https://sandcastle.cesium.com/CesiumUnminified/Cesium.js"></script>-->
+<!--  <script src="../src/js/sancastle/CesiumSandcastle.js"></script>-->
+  <script src="https://sandcastle.cesium.com/Sandcastle-header.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-client.js"></script>
+
+<!--  <script src="https://sandcastle.cesium.com/Sandcastle-helper.js"></script>-->
+  <script src="https://sandcastle.cesium.com/ThirdParty/pako.min.js"></script>
   <link href="https://cesiumjs.org/releases/1.81/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
   <link href="https://sandcastle.cesium.com/templates/bucket.css" rel="stylesheet">
   <style>
@@ -27,9 +34,6 @@
   .cesium-credit-text {color: #ffffff;  }
   .cesium-credit-textContainer *, .cesium-credit-logoContainer * {display: inline;  }
 
-    .fullSize {
-      display: none;
-    }
 
     .sandcastle-loading::after {
       font: 24px sans-serif;
@@ -37,20 +41,20 @@
       padding-bottom: 2px;
     }
 
-    /*#toolbar table tr {*/
-    /*  transform: translateY(0);*/
-    /*  transition: transform 0.4s ease-out;*/
-    /*}*/
+    #toolbar table tr {
+      transform: translateY(0);
+      transition: transform 0.4s ease-out;
+    }
 
-    /*#toolbar table tr.up {*/
-    /*  transform: translateY(33px);*/
-    /*  transition: none;*/
-    /*}*/
+    #toolbar table tr.up {
+      transform: translateY(33px);
+      transition: none;
+    }
 
-    /*#toolbar table tr.down {*/
-    /*  transform: translateY(-33px);*/
-    /*  transition: none;*/
-    /*}*/
+    #toolbar table tr.down {
+      transform: translateY(-33px);
+      transition: none;
+    }
   </style>
 
 </head>
@@ -67,57 +71,59 @@
   Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
 
   const worldTerrain = Cesium.createWorldTerrain({
+    requestWaterMask: true,
     requestVertexNormals: true,
-    requestWaterMask: true
   });
 
-  var viewer = new Cesium.Viewer('cesiumContainer', {
+  const viewer = new Cesium.Viewer("cesiumContainer", {
     terrainProvider: worldTerrain,
   });
 
-  //set lighting to true
+  //const osmBuildings = viewer.scene.primitives.add(Cesium.createOsmBuildings());
+
+  // set lighting to true
   viewer.scene.globe.enableLighting = true;
 
-  //setup alternative terrain providers
+  // setup alternative terrain providers
   const ellipsoidProvider = new Cesium.EllipsoidTerrainProvider();
 
   const vrTheWorldProvider = new Cesium.VRTheWorldTerrainProvider({
-    url:"http://www.vr-theworld.com/vr-theworld/tiles1.0.0/73/",
-    credit:"Terrain data courtesy VT MAK",
+    url: "http://www.vr-theworld.com/vr-theworld/tiles1.0.0/73/",
+    credit: "Terrain data courtesy VT MÄK",
   });
 
   const arcGisProvider = new Cesium.ArcGISTiledElevationTerrainProvider({
-    url:"https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
+    url:
+      "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
   });
-
   //Sine wave
   const customHeightmapWidth = 32;
   const customHeightmapHeight = 32;
-  const customHeightmapProvider = new Cesium.CustomHeightmapTerrainProvider(
-    {
-      width: customHeightmapWidth,
-      height: customHeightmapHeight,
-      callback: function (x, y, level) {
-        const width = customHeightmapWidth;
-        const height = customHeightmapHeight;
-        const buffer = new Float32Array(width * height);
-
-        for (let yy = 0; yy < height; yy++) {
-          for (let xx = 0; xx < width; xx++) {
-            const u = (x + xx / (width - 1)) / Math.pow(2, level);
-            const v = (y + yy / (height - 1)) / Math.pow(2, level);
-
-            const heightValue = 4000 * (Math.sin(8000 * v) * 0.5 + 0.5);
-
-            const index = yy * width + xx;
-            buffer[index] = heightValue;
-          }
-        }
-
-        return buffer;
-      },
-    }
-  );
+  // const customHeightmapProvider = new Cesium.CustomHeightmapTerrainProvider(
+  //   {
+  //     width: customHeightmapWidth,
+  //     height: customHeightmapHeight,
+  //     callback: function (x, y, level) {
+  //       const width = customHeightmapWidth;
+  //       const height = customHeightmapHeight;
+  //       const buffer = new Float32Array(width * height);
+  //
+  //       for (let yy = 0; yy < height; yy++) {
+  //         for (let xx = 0; xx < width; xx++) {
+  //           const u = (x + xx / (width - 1)) / Math.pow(2, level);
+  //           const v = (y + yy / (height - 1)) / Math.pow(2, level);
+  //
+  //           const heightValue = 4000 * (Math.sin(8000 * v) * 0.5 + 0.5);
+  //
+  //           const index = yy * width + xx;
+  //           buffer[index] = heightValue;
+  //         }
+  //       }
+  //
+  //       return buffer;
+  //     },
+  //   }
+  // );
 
 
   Sandcastle.addToolbarMenu(
@@ -158,12 +164,12 @@
           viewer.terrainProvider = ellipsoidProvider;
         },
       },
-      {
-        text: "CustomHeightmapTerrainProvider",
-        onselect: function () {
-          viewer.terrainProvider = customHeightmapProvider;
-        },
-      },
+      // {
+      //   text: "CustomHeightmapTerrainProvider",
+      //   onselect: function () {
+      //     viewer.terrainProvider = customHeightmapProvider;
+      //   },
+      // },
       {
         text: "VRTheWorldTerrainProvider",
         onselect: function () {

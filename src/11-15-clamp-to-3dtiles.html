@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesiumjs.org/releases/1.81/Build/Cesium/Cesium.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-header.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-client.js"></script>
+  <script src="https://sandcastle.cesium.com/ThirdParty/pako.min.js"></script>
+
+  <script src="https://sandcastle.cesium.com/Sandcastle-helpers.js"></script>
+
+  <link href="https://cesiumjs.org/releases/1.81/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <link href="https://sandcastle.cesium.com/templates/bucket.css" rel="stylesheet">
+  <style>
+    #viewChanged,
+    #cameraChanged {
+      display: none;
+      background-color: red;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer" class="fullSize" ></div>
+  <div id="loadingOverlay"><h1>Loading...</h1></div>
+  <div id="toolbar">
+  </div>
+</body>
+<script type="text/javascript">
+
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  const viewer = new Cesium.Viewer("cesiumContainer", {
+    terrainProvider: Cesium.createWorldTerrain(),
+  });
+  const scene = viewer.scene;
+  const clock = viewer.clock;
+  let entity;
+  let positionProperty;
+  const dataSourcePromise = Cesium.CzmlDataSource.load(
+    "../src/data/ClampToGround.czml"
+  );
+  viewer.dataSources.add(dataSourcePromise).then(function (dataSource) {
+    entity = dataSource.entities.getById("CesiumMilkTruck");
+    positionProperty = entity.position;
+  });
+
+  // const tileset = scene.primitives.add(
+  //   new Cesium.Cesium3DTileset({
+  //     url: Cesium.IonResource.fromAssetId(40866),
+  //   })
+  // );
+
+  viewer.camera.setView({
+    destination: new Cesium.Cartesian3(
+      1216403.8845586285,
+      -4736357.493351395,
+      4081299.715698949
+    ),
+    orientation: new Cesium.HeadingPitchRoll(
+      4.2892217081808806,
+      -0.4799070147502502,
+      6.279789177843313
+    ),
+    endTransform: Cesium.Matrix4.IDENTITY,
+  });
+
+  if (scene.clampToHeightSupported) {
+    start();
+    //tileset.initialTilesLoaded.addEventListener(start);
+  } else {
+    //window.alert("This browser does not support clampToHeight.");
+  }
+
+  function start() {
+    clock.shouldAnimate = true;
+    const objectsToExclude = [entity];
+    scene.postRender.addEventListener(function () {
+      const position = positionProperty.getValue(clock.currentTime);
+      entity.position = scene.clampToHeight(position, objectsToExclude);
+    });
+  }
+
+
+
+</script>
+</html>

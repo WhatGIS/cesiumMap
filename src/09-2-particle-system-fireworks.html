@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesiumjs.org/releases/1.81/Build/Cesium/Cesium.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-header.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-client.js"></script>
+  <script src="https://sandcastle.cesium.com/ThirdParty/pako.min.js"></script>
+
+  <script src="https://sandcastle.cesium.com/Sandcastle-helpers.js"></script>
+
+  <link href="https://cesiumjs.org/releases/1.81/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <link href="https://sandcastle.cesium.com/templates/bucket.css" rel="stylesheet">
+  <style>
+    #toolbar {
+      background: rgba(42, 42, 42, 0.8);
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    #toolbar input {
+      vertical-align: middle;
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+
+    #toolbar .header {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer" class="fullSize" ></div>
+  <div id="loadingOverlay"><h1>Loading...</h1></div>
+  <div id="toolbar">
+    <table>
+      <tbody>
+      <tr>
+        <td>Rate</td>
+        <td>
+          <input type="range" min="0.0" max="100.0" step="1" data-bind="value: emissionRate, valueUpdate: 'input'">
+          <input type="text" size="5" data-bind="value: emissionRate">
+        </td>
+      </tr>
+
+      <tr>
+        <td>Size</td>
+        <td>
+          <input type="range" min="2" max="60.0" step="1" data-bind="value: particleSize, valueUpdate: 'input'">
+          <input type="text" size="5" data-bind="value: particleSize">
+        </td>
+      </tr>
+
+      <tr>
+        <td>Min Life</td>
+        <td>
+          <input type="range" min="0.1" max="30.0" step="1" data-bind="value: minimumParticleLife, valueUpdate: 'input'">
+          <input type="text" size="5" data-bind="value: minimumParticleLife">
+        </td>
+      </tr>
+
+      <tr>
+        <td>Max Life</td>
+        <td>
+          <input type="range" min="0.1" max="30.0" step="1" data-bind="value: maximumParticleLife, valueUpdate: 'input'">
+          <input type="text" size="5" data-bind="value: maximumParticleLife">
+        </td>
+      </tr>
+
+      <tr>
+        <td>Min Speed</td>
+        <td>
+          <input type="range" min="0.0" max="30.0" step="1" data-bind="value: minimumSpeed, valueUpdate: 'input'">
+          <input type="text" size="5" data-bind="value: minimumSpeed">
+        </td>
+      </tr>
+
+      <tr>
+        <td>Max Speed</td>
+        <td>
+          <input type="range" min="0.0" max="30.0" step="1" data-bind="value: maximumSpeed, valueUpdate: 'input'">
+          <input type="text" size="5" data-bind="value: maximumSpeed">
+        </td>
+      </tr>
+
+      <tr>
+        <td>Start Scale</td>
+        <td>
+          <input type="range" min="0.0" max="10.0" step="1" data-bind="value: startScale, valueUpdate: 'input'">
+          <input type="text" size="5" data-bind="value: startScale">
+        </td>
+      </tr>
+
+      <tr>
+        <td>End Scale</td>
+        <td>
+          <input type="range" min="0.0" max="10.0" step="1" data-bind="value: endScale, valueUpdate: 'input'">
+          <input type="text" size="5" data-bind="value: endScale">
+        </td>
+      </tr>
+
+      <tr>
+        <td>Gravity</td>
+        <td>
+          <input type="range" min="-20.0" max="20.0" step="1" data-bind="value: gravity, valueUpdate: 'input'">
+          <input type="text" size="5" data-bind="value: gravity">
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+<script type="text/javascript">
+
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  const viewer = new Cesium.Viewer("cesiumContainer", {
+    shouldAnimate: true,
+  });
+
+  const scene = viewer.scene;
+  scene.debugShowFramesPerSecond = true;
+
+  Cesium.Math.setRandomNumberSeed(315);
+
+  const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+    Cesium.Cartesian3.fromDegrees(-75.59777, 40.03883)
+  );
+  const emitterInitialLocation = new Cesium.Cartesian3(0.0, 0.0, 100.0);
+
+  let particleCanvas;
+
+  function getImage() {
+    if (!Cesium.defined(particleCanvas)) {
+      particleCanvas = document.createElement("canvas");
+      particleCanvas.width = 20;
+      particleCanvas.height = 20;
+      const context2D = particleCanvas.getContext("2d");
+      context2D.beginPath();
+      context2D.arc(8, 8, 8, 0, Cesium.Math.TWO_PI, true);
+      context2D.closePath();
+      context2D.fillStyle = "rgb(255, 255, 255)";
+      context2D.fill();
+    }
+    return particleCanvas;
+  }
+
+  const minimumExplosionSize = 30.0;
+  const maximumExplosionSize = 100.0;
+  const particlePixelSize = new Cesium.Cartesian2(7.0, 7.0);
+  const burstSize = 400.0;
+  const lifetime = 10.0;
+  const numberOfFireworks = 20.0;
+
+  const emitterModelMatrixScratch = new Cesium.Matrix4();
+
+  function createFirework(offset, color, bursts) {
+    const position = Cesium.Cartesian3.add(
+      emitterInitialLocation,
+      offset,
+      new Cesium.Cartesian3()
+    );
+    const emitterModelMatrix = Cesium.Matrix4.fromTranslation(
+      position,
+      emitterModelMatrixScratch
+    );
+    const particleToWorld = Cesium.Matrix4.multiply(
+      modelMatrix,
+      emitterModelMatrix,
+      new Cesium.Matrix4()
+    );
+    const worldToParticle = Cesium.Matrix4.inverseTransformation(
+      particleToWorld,
+      particleToWorld
+    );
+
+    const size = Cesium.Math.randomBetween(
+      minimumExplosionSize,
+      maximumExplosionSize
+    );
+    const particlePositionScratch = new Cesium.Cartesian3();
+    const force = function (particle) {
+      const position = Cesium.Matrix4.multiplyByPoint(
+        worldToParticle,
+        particle.position,
+        particlePositionScratch
+      );
+      if (Cesium.Cartesian3.magnitudeSquared(position) >= size * size) {
+        Cesium.Cartesian3.clone(
+          Cesium.Cartesian3.ZERO,
+          particle.velocity
+        );
+      }
+    };
+
+    const normalSize =
+      (size - minimumExplosionSize) /
+      (maximumExplosionSize - minimumExplosionSize);
+    const minLife = 0.3;
+    const maxLife = 1.0;
+    const life = normalSize * (maxLife - minLife) + minLife;
+
+    scene.primitives.add(
+      new Cesium.ParticleSystem({
+        image: getImage(),
+        startColor: color,
+        endColor: color.withAlpha(0.0),
+        particleLife: life,
+        speed: 100.0,
+        imageSize: particlePixelSize,
+        emissionRate: 0,
+        emitter: new Cesium.SphereEmitter(0.1),
+        bursts: bursts,
+        lifetime: lifetime,
+        updateCallback: force,
+        modelMatrix: modelMatrix,
+        emitterModelMatrix: emitterModelMatrix,
+      })
+    );
+  }
+
+  const xMin = -100.0;
+  const xMax = 100.0;
+  const yMin = -80.0;
+  const yMax = 100.0;
+  const zMin = -50.0;
+  const zMax = 50.0;
+
+  const colorOptions = [
+    {
+      minimumRed: 0.75,
+      green: 0.0,
+      minimumBlue: 0.8,
+      alpha: 1.0,
+    },
+    {
+      red: 0.0,
+      minimumGreen: 0.75,
+      minimumBlue: 0.8,
+      alpha: 1.0,
+    },
+    {
+      red: 0.0,
+      green: 0.0,
+      minimumBlue: 0.8,
+      alpha: 1.0,
+    },
+    {
+      minimumRed: 0.75,
+      minimumGreen: 0.75,
+      blue: 0.0,
+      alpha: 1.0,
+    },
+  ];
+
+  for (let i = 0; i < numberOfFireworks; ++i) {
+    const x = Cesium.Math.randomBetween(xMin, xMax);
+    const y = Cesium.Math.randomBetween(yMin, yMax);
+    const z = Cesium.Math.randomBetween(zMin, zMax);
+    const offset = new Cesium.Cartesian3(x, y, z);
+    const color = Cesium.Color.fromRandom(
+      colorOptions[i % colorOptions.length]
+    );
+
+    const bursts = [];
+    for (let j = 0; j < 3; ++j) {
+      bursts.push(
+        new Cesium.ParticleBurst({
+          time: Cesium.Math.nextRandomNumber() * lifetime,
+          minimum: burstSize,
+          maximum: burstSize,
+        })
+      );
+    }
+
+    createFirework(offset, color, bursts);
+  }
+
+  const camera = viewer.scene.camera;
+  const cameraOffset = new Cesium.Cartesian3(-300.0, 0.0, 0.0);
+  camera.lookAtTransform(modelMatrix, cameraOffset);
+  camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+
+  const toFireworks = Cesium.Cartesian3.subtract(
+    emitterInitialLocation,
+    cameraOffset,
+    new Cesium.Cartesian3()
+  );
+  Cesium.Cartesian3.normalize(toFireworks, toFireworks);
+  const angle =
+    Cesium.Math.PI_OVER_TWO -
+    Math.acos(
+      Cesium.Cartesian3.dot(toFireworks, Cesium.Cartesian3.UNIT_Z)
+    );
+  camera.lookUp(angle);
+
+</script>
+</html>

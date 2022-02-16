@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesiumjs.org/releases/1.81/Build/Cesium/Cesium.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-header.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-client.js"></script>
+  <script src="https://sandcastle.cesium.com/ThirdParty/pako.min.js"></script>
+
+  <script src="https://sandcastle.cesium.com/Sandcastle-helpers.js"></script>
+
+  <link href="https://cesiumjs.org/releases/1.81/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <link href="https://sandcastle.cesium.com/templates/bucket.css" rel="stylesheet">
+  <style>
+    #toolbar {
+      background: rgba(42, 42, 42, 0.8);
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    #toolbar input {
+      vertical-align: middle;
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+
+    #toolbar .header {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer" class="fullSize" ></div>
+  <div id="loadingOverlay"><h1>Loading...</h1></div>
+  <div id="toolbar">
+  </div>
+</body>
+<script type="text/javascript">
+
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  const viewer = new Cesium.Viewer("cesiumContainer",{
+    infoBox: false,
+    selectionIndicator: false,
+    shadow: true,
+    shouldAnimate: true,
+  });
+
+  function createModel(url,height){
+    viewer.entities.removeAll();
+
+    const position = Cesium.Cartesian3.fromDegrees(
+      -123.0744619,
+      44.0503706,
+      height
+    );
+
+    const heading = Cesium.Math.toRadians(135);
+    const pitch = 0;
+    const roll =0;
+    const hpr = new Cesium.HeadingPitchRoll(heading,pitch,roll);
+    const orientation = Cesium.Transforms.headingPitchRollQuaternion(
+      position,
+      hpr
+    );
+
+    const entity = viewer.entities.add({
+      name: url,
+      position:position,
+      orientation: orientation,
+      model: {
+        uri: url,
+        minimumPixelSize: 128,
+        maximumScale: 20000,
+      },
+    });
+
+    viewer.trackedEntity = entity;
+  }
+
+  const options = [
+    {
+      text: "Aircraft",
+      onselect: function () {
+        createModel(
+          "../src/model/Cesium_Air.glb",
+          5000.0
+        );
+      },
+    },
+    {
+      text: "Drone",
+      onselect: function () {
+        createModel(
+          "../src/model/CesiumDrone.glb",
+          150.0
+        );
+      },
+    },
+    {
+      text: "Ground Vehicle",
+      onselect: function () {
+        createModel(
+          "../src/model/GroundVehicle.glb",
+          0
+        );
+      },
+    },
+    {
+      text: "Hot Air Balloon",
+      onselect: function () {
+        createModel(
+          "../src/model/CesiumBalloon.glb",
+          1000.0
+        );
+      },
+    },
+    {
+      text: "Milk Truck",
+      onselect: function () {
+        createModel(
+          "../src/model/CesiumMilkTruck.glb",
+          0
+        );
+      },
+    },
+    {
+      text: "Skinned Character",
+      onselect: function () {
+        createModel(
+          "../src/model/Cesium_Man.glb",
+          0
+        );
+      },
+    },
+    {
+      text: "Draco Compressed Model",
+      onselect: function () {
+        createModel(
+          "../src/model/CesiumMilkTruck.gltf",
+          0
+        );
+      },
+    },
+    {
+      text: "KTX2 Compressed Balloon",
+      onselect: function () {
+        if (!Cesium.FeatureDetection.supportsBasis(viewer.scene)) {
+          window.alert(
+            "This browser does not support Basis Universal compressed textures"
+          );
+        }
+        createModel(
+          "../src/model/CesiumBalloonKTX2.glb",
+          1000.0
+        );
+      },
+    },
+  ];
+
+  Sandcastle.addToolbarMenu(options);
+  createModel(
+    "../src/model/Cesium_Air.glb",
+    5000.0
+  );
+
+</script>
+</html>
