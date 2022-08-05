@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Cesium.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-header.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-client.js"></script>
+  <script src="https://sandcastle.cesium.com/ThirdParty/pako.min.js"></script>
+
+  <script src="https://sandcastle.cesium.com/Sandcastle-helpers.js"></script>
+
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <link href="https://sandcastle.cesium.com/templates/bucket.css" rel="stylesheet">
+  <style>
+    #toolbar {
+      background: rgba(42, 42, 42, 0.8);
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    #toolbar input {
+      vertical-align: middle;
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+
+    #toolbar .header {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer" class="fullSize" ></div>
+  <div id="loadingOverlay"><h1>Loading...</h1></div>
+  <div id="toolbar">
+  </div>
+</body>
+<script type="text/javascript">
+
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  const viewer = new Cesium.Viewer("cesiumContainer",{
+    shouldAnimate: true,
+  });
+
+  function  flySimple() {
+    viewer.dataSources.add(
+      Cesium.CzmlDataSource.load("../src/data/simple.czml")
+    );
+    viewer.camera.flyHome(0);
+  }
+
+  function flyVehicle(){
+    viewer.dataSources.add(
+      Cesium.CzmlDataSource.load("../src/data/Vehicle.czml")
+    );
+
+    viewer.scene.camera.setView({
+      destination: Cesium.Cartesian3.fromDegrees(-116.52,35.02,95000),
+      orientation:{
+        heading: 6,
+      },
+    });
+  }
+
+  Sandcastle.addDefaultToolbarButton("Satellite",function(){
+    flySimple();
+  });
+
+  Sandcastle.addToolbarButton("Vehicle",function () {
+    flyVehicle();
+  });
+
+  flySimple();
+
+  Sandcastle.reset = function () {
+    viewer.dataSources.removeAll();
+  }
+
+</script>
+</html>

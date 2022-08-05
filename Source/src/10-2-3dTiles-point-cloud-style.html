@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Cesium.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-header.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-client.js"></script>
+  <script src="https://sandcastle.cesium.com/ThirdParty/pako.min.js"></script>
+
+  <script src="https://sandcastle.cesium.com/Sandcastle-helpers.js"></script>
+
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <link href="https://sandcastle.cesium.com/templates/bucket.css" rel="stylesheet">
+  <style>
+    #toolbar {
+      background: rgba(42, 42, 42, 0.8);
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    #toolbar input {
+      vertical-align: middle;
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+
+    #toolbar .header {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer" class="fullSize" ></div>
+  <div id="loadingOverlay"><h1>Loading...</h1></div>
+  <div id="toolbar">
+  </div>
+</body>
+<script type="text/javascript">
+
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  const viewer = new Cesium.Viewer("cesiumContainer", {
+    terrainProvider: Cesium.createWorldTerrain(),
+    animation: false,
+  });
+
+  //A ~10 billion point 3D Tileset of the city of Montreal, Canada captured in 2015 with a resolution 20cm. Tiled and hosted by Cesium ion.
+  var pointCloudTileset = viewer.scene.primitives.add(
+    new Cesium.Cesium3DTileset({
+      url: Cesium.IonResource.fromAssetId(28945),
+      pointCloudShading: {
+        attenuation: true,
+        maximumAttenuation:2,
+      },
+    })
+  );
+
+
+  // Fly to the Biosphere Museum
+  viewer.camera.setView({
+    destination: new Cesium.Cartesian3(
+      1269319.8408991008,
+      -4293301.826913256,
+      4527724.561372451
+    ),
+    orientation: {
+      direction: new Cesium.Cartesian3(
+        -0.742505030107832,
+        -0.3413204607149223,
+        -0.5763563336703441
+      ),
+      up: new Cesium.Cartesian3(
+        -0.04655102331027917,
+        -0.8320643756800384,
+        0.5527222421370013
+      ),
+    },
+    easingFunction: Cesium.EasingFunction.QUADRATIC_IN_OUT,
+  });
+
+  pointCloudTileset.style = new Cesium.Cesium3DTileStyle({
+    color: {
+      conditions: [
+        ["${Classification} === 2", "color('brown')"],       // ground
+        ["${Classification} === 3", "color('greenyellow')"], // low vegetation
+        ["${Classification} === 4", "color('green')"],       // medium vegetation
+        ["${Classification} === 5", "color('darkgreen')"],   // high vegetation
+        ["true", "color('white')"]
+      ]
+    }
+  });
+
+</script>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Cesium.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-header.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-client.js"></script>
+  <script src="https://sandcastle.cesium.com/ThirdParty/pako.min.js"></script>
+
+  <script src="https://sandcastle.cesium.com/Sandcastle-helpers.js"></script>
+
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <link href="https://sandcastle.cesium.com/templates/bucket.css" rel="stylesheet">
+
+</head>
+<body>
+  <div id="cesiumContainer" class="fullSize" ></div>
+  <div id="loadingOverlay"><h1>Loading...</h1></div>
+  <div id="toolbar">  </div>
+</body>
+<script type="text/javascript">
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  const viewer = new Cesium.Viewer("cesiumContainer", {
+    terrainProvider: Cesium.createWorldTerrain({
+      requestWaterMask: true,
+      requestVertexNormals: true,
+    }),
+  });
+
+  var west = -90.0;
+  var south = 38.0;
+  var east = -87.0;
+  var north = 40.0;
+
+  var rectangle = viewer.entities.add({
+    rectangle:{
+      coordinates: Cesium.Rectangle.fromDegrees(west,south,east,north),
+      material: Cesium.Color.GREEN,
+    },
+  });
+
+  viewer.flyTo(rectangle);
+
+</script>
+</html>

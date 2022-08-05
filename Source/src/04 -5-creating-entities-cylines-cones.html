@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+</head>
+<body>
+<div id="cesiumContainer" ></div>
+<div id="toolbar"></div>
+</body>
+<script type="text/javascript">
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  const viewer = new Cesium.Viewer('cesiumContainer', {
+    terrainProvider: Cesium.createWorldTerrain()
+  });
+
+  var greenCylinder = viewer.entities.add({
+    name: "Green cylinder with black outline",
+    position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 200000.0),
+    cylinder: {
+      length: 400000.0,
+      topRadius: 200000.0,
+      bottomRadius: 200000.0,
+      material: Cesium.Color.GREEN.withAlpha(0.5),
+      outline: true,
+      outlineColor: Cesium.Color.DARK_GREEN,
+    },
+  });
+
+  var redCone = viewer.entities.add({
+    name: "Red cone",
+    position: Cesium.Cartesian3.fromDegrees(-105.0, 40.0, 200000.0),
+    cylinder: {
+      length: 400000.0,
+      topRadius: 0.0,
+      bottomRadius: 200000.0,
+      material: Cesium.Color.RED,
+    },
+  });
+
+  viewer.zoomTo(viewer.entities);
+</script>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Cesium.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-header.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-client.js"></script>
+  <script src="https://sandcastle.cesium.com/ThirdParty/pako.min.js"></script>
+
+  <script src="https://sandcastle.cesium.com/Sandcastle-helpers.js"></script>
+
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <link href="https://sandcastle.cesium.com/templates/bucket.css" rel="stylesheet">
+  <style>
+    #toolbar {
+      background: rgba(42, 42, 42, 0.8);
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    #toolbar input {
+      vertical-align: middle;
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+
+    #toolbar .header {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer" class="fullSize" ></div>
+  <div id="loadingOverlay"><h1>Loading...</h1></div>
+  <div id="toolbar">
+  </div>
+</body>
+<script type="text/javascript">
+
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  //Point Cloud by Prof. Peter Allen, Columbia University Robotics Lab. Scanning by Alejandro Troccoli and Matei Ciocarlie.
+  var viewer = new Cesium.Viewer('cesiumContainer', {
+    terrainProvider : Cesium.createWorldTerrain()
+  });
+
+  var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  handler.setInputAction(function(event) {
+    var cartesian = viewer.scene.pickPosition(event.position);
+    console.log(cartesian);
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+  var style = {
+    defines : {
+      distance : 'clamp(distance(${POSITION_ABSOLUTE}, vec3(4401699.414399114, 225012.6097161405, 4595431.437015289)) / 25.0, 0.0, 1.0)'
+    },
+    color : 'mix(color("yellow"), color("red"), ${distance})'
+  };
+
+  var tileset = new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(16421) });
+  tileset.style = new Cesium.Cesium3DTileStyle(style);
+  viewer.scene.primitives.add(tileset);
+
+  viewer.scene.camera.setView({
+    destination: new Cesium.Cartesian3(4401744.644145314, 225051.41078911052, 4595420.374784433),
+    orientation: new Cesium.HeadingPitchRoll(5.646733805039757, -0.276607153839886, 6.281110875400085)
+  });
+
+
+</script>
+</html>

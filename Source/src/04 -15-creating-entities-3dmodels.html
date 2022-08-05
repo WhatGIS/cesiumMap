@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+</head>
+<body>
+<div id="cesiumContainer" ></div>
+<div id="toolbar"></div>
+</body>
+<script type="text/javascript">
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  var viewer = new Cesium.Viewer('cesiumContainer');
+
+  var position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706);
+  var heading = Cesium.Math.toRadians(45.0);
+  var pitch = Cesium.Math.toRadians(15.0);
+  var roll = Cesium.Math.toRadians(0.0);
+  var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, new Cesium.HeadingPitchRoll(heading, pitch, roll));
+
+
+  var entity = viewer.entities.add({
+    name:'Fire Fire Fire',
+    position: position,
+    orientation: orientation,
+    model : {
+      uri : '../src/model/GroundVehicle.glb',
+    }
+  });
+
+  viewer.trackedEntity = entity;
+
+</script>
+</html>

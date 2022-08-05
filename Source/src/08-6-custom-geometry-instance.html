@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Cesium.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-header.js"></script>
+  <script src="https://sandcastle.cesium.com/Sandcastle-client.js"></script>
+  <script src="https://sandcastle.cesium.com/ThirdParty/pako.min.js"></script>
+
+  <script src="https://sandcastle.cesium.com/Sandcastle-helpers.js"></script>
+
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <link href="https://sandcastle.cesium.com/templates/bucket.css" rel="stylesheet">
+  <style>
+    #viewChanged,
+    #cameraChanged {
+      display: none;
+      background-color: red;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer" class="fullSize" ></div>
+  <div id="loadingOverlay"><h1>Loading...</h1></div>
+  <div id="toolbar">
+    <div id="viewChanged">ViewChanged</div>
+    <div id="cameraChanged">Camera Changed</div>
+  </div>
+</body>
+<script type="text/javascript">
+
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  var viewer = new Cesium.Viewer('cesiumContainer');
+  var scene = viewer.scene;
+
+  var ellipsoidGeometry = new Cesium.EllipsoidGeometry({
+    vertexFormat : Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
+    radii : new Cesium.Cartesian3(300000.0, 200000.0, 150000.0)
+  });
+
+  var cyanEllipsoidInstance = new Cesium.GeometryInstance({
+    geometry : ellipsoidGeometry,
+    modelMatrix : Cesium.Matrix4.multiplyByTranslation(
+      Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(-100.0, 40.0)),
+      new Cesium.Cartesian3(0.0, 0.0, 150000.0),
+      new Cesium.Matrix4()
+    ),
+    attributes : {
+      color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.CYAN)
+    }
+  });
+
+  var orangeEllipsoidInstance = new Cesium.GeometryInstance({
+    geometry : ellipsoidGeometry,
+    modelMatrix : Cesium.Matrix4.multiplyByTranslation(
+      Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(-100.0, 40.0)),
+      new Cesium.Cartesian3(0.0, 0.0, 450000.0),
+      new Cesium.Matrix4()
+    ),
+    attributes : {
+      color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.ORANGE)
+    }
+  });
+
+  scene.primitives.add(new Cesium.Primitive({
+    geometryInstances : [cyanEllipsoidInstance, orangeEllipsoidInstance],
+    appearance : new Cesium.PerInstanceColorAppearance({
+      translucent : false,
+      closed : true
+    })
+  }));
+
+</script>
+</html>

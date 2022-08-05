@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+</head>
+<body>
+<div id="cesiumContainer" ></div>
+<!--<div id="toolbar"></div>-->
+</body>
+<script type="text/javascript">
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNGRhYTVjNS1iMGNjLTRiYmItYThlYy03NDA5M2Q3OGRiYWQiLCJpZCI6Mjk5NDAsImlhdCI6MTYwMzc3NTgwNX0.rmXVfa7hbw3AeBAc3H7mwUkXP7wfhciqPk0_QI0Ha9w';
+
+  const viewer = new Cesium.Viewer('cesiumContainer');
+
+  var entity1 = viewer.entities.add({
+    polyline : {
+      positions : Cesium.Cartesian3.fromDegreesArray([-77, 35,
+        -77.1, 35]),
+      width : 5,
+      material : Cesium.Color.RED
+    }});
+
+  var entity2 = viewer.entities.add({
+    polyline : {
+      positions : Cesium.Cartesian3.fromDegreesArray([-77, 34.98,
+        -77.1, 34.98]),
+      width : 5,
+      material : new Cesium.PolylineOutlineMaterialProperty({
+        color:Cesium.Color.ORANGE,
+        outlineWidth:3,
+        outlineColor:Cesium.Color.BLACK
+      }),
+    }
+  });
+
+  var entity3 = viewer.entities.add({
+    polyline : {
+      positions : Cesium.Cartesian3.fromDegreesArray([-77, 34.96,
+        -77.1, 34.96]),
+      width : 5,
+      material : new Cesium.PolylineGlowMaterialProperty({
+        glowPower: 0.2,
+        color:Cesium.Color.BLUE,
+      }),
+    }
+  });
+
+  viewer.zoomTo(viewer.entities);
+</script>
+</html>
