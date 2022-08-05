@@ -17,8 +17,16 @@
   //   terrainProvider: Cesium.createWorldTerrain()
   // });
 
-
-  var viewer = new Cesium.Viewer('cesiumContainer');
+  var viewer = new Cesium.Viewer('cesiumContainer',{
+    animation:false,    //左下角的动画仪表盘
+    baseLayerPicker:false,  //右上角的图层选择按钮
+    geocoder:false,  //搜索框
+    homeButton:false,  //home按钮
+    sceneModePicker:false, //模式切换按钮
+    timeline:false,    //底部的时间轴
+    navigationHelpButton:false,  //右上角的帮助按钮，
+    fullscreenButton:false   //右下角的全屏按钮
+  });
 
   var wyoming = viewer.entities.add({
     polygon : {
