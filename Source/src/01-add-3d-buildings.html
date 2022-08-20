@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <title>01-add-3d-building</title>
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <link href="https://sandcastle.cesium.com/templates/bucket.css" rel="stylesheet"></link>
+<!--  <link href="https://cesium.com/downloads/cesiumjs/releases/1.96/Build/Cesium/Widgets/widgets.css" rel="stylesheet">-->
 </head>
 <body>
-<div id="cesiumContainer"></div>
+<div id="mapId" class="fullSize" style="width: 100%; height: 100%;"></div>
 <script>
 
-  const viewer = new Cesium.Viewer('cesiumContainer',
+  const viewer = new Cesium.Viewer('mapId',
     {
       animation:false,    //左下角的动画仪表盘
       baseLayerPicker:false,  //右上角的图层选择按钮
